@@ -2,16 +2,16 @@
 
 
 ## Overview
-Elmo Hikes is a client-side JavaScript web application that helps users discover and explore hiking trails. The app displays a curated list of hike trails, each with details such as name, location, difficulty, and an image. Users can browse the list and mark their favorite trails for easy access later.
+Elmo Bob is a client-side JavaScript web application that helps users discover and explore hiking trails. The app displays a curated list of hike trails, each with details such as name, location, difficulty, and an image. Users can browse the list and mark their favorite trails for easy access later.
 
 Developed for the COMP 1800 course, this project applies User-Centred Design practices and agile project management, and demonstrates integration with Firebase backend services for storing user favorites.
 
 ---
 
 
-## Features
+## Styles
 
-- Browse a list of curated hiking trails with images and details
+- Look at a list of curated hiking trails with images and details
 - Mark and unmark trails as favorites
 - View a personalized list of favorite hikes
 - Responsive design for desktop and mobile
