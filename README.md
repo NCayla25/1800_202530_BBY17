@@ -61,7 +61,7 @@ elmo-hikes/
 ## Contributors
 
 - **Heebba Salman** - BCIT CST Student with a passion for outdoor adventures and user-friendly applications. Fun fact: Loves solving Rubik's Cubes in under a minute.
-- Nicholas Cayla (NCayla25) - BCIT CST Student with a passion for outdoor adventures and user-friendly applications. Fun fact: Loves solving Rubik's Cubes in under a minute.
+- **Nicholas Cayla** (NCayla25) - BCIT CST Student with a passion for outdoor adventures and user-friendly applications. Fun fact: Loves solving Rubik's Cubes in under a minute.
 - **Damon Cao** (homelessradish) - BCIT CST Student with a passion for indoor adventures and user-friendly applications. Fun fact: Loves doing assignments the day of the deadline.
 
 ---
