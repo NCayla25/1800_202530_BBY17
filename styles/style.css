@@ -1,1 +1,45 @@
 
+main {
+    padding-bottom: 70px;
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: lightgray;
+    border-top: 1px solid #ccc;
+}
+
+footer nav ul {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    list-style: none;
+    margin: 0;
+    padding: 10px 0;
+}
+
+footer nav ul li a img {
+    width: 32px;
+    height: auto;
+}
+
+footer nav ul li a.active {
+    background-color: lightblue;
+    border-radius: 50%;
+    padding: 8px;
+}
+
+@media (min-width: 768px) {
+    footer nav ul li a img {
+        width: 40px;
+    }
+}
+
+@media (min-width: 1024px) {
+    footer nav ul li a img {
+        width: 48px;
+    }
+}
