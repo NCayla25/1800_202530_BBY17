@@ -1,3 +1,4 @@
+// VERY BAD CODE FROM FIRST MAP METHOD IDEA
 let map = [
   [3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
   [3, 0, 0, 0, 0, 0, 0, 0, 0, 3],
