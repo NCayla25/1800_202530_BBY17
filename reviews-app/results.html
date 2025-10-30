@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Latest Reviews</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f0f8f7;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .app-header {
+            background-color: #0d9488;
+            /* teal */
+            color: white;
+            padding: 0.8rem 1rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            background-color: #ffffff;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-dark {
+            background-color: #0d9488;
+            border: none;
+        }
+
+        .btn-dark:hover {
+            background-color: #0f766e;
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: 10px;
+            border: 1px solid #a7f3d0;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #0d9488;
+            box-shadow: 0 0 0 0.2rem rgba(13, 148, 136, 0.25);
+        }
+
+        .avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background-color: #a7f3d0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #065f46;
+        }
+
+        .review-card {
+            border-left: 5px solid #0d9488;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container py-3">
+        <!-- Header -->
+        <div class="app-header d-flex justify-content-between align-items-center">
+            <a href="filter.html" class="text-white"><i class="bi bi-arrow-left fs-4"></i></a>
+            <h5 class="m-0 fw-semibold">Short cuts</h5>
+            <i class="bi bi-search fs-4"></i>
+        </div>
+
+        <!-- Section: Latest reviews -->
+        <p class="text-muted mb-3 fw-semibold">Latest reviews</p>
+        <div id="reviewsContainer" class="mb-4"></div>
+
+        <hr class="my-4">
+
+        <!-- Section: Write a Review -->
+        <h5 class="mb-3 text-center fw-semibold text-teal">Write a Review</h5>
+        <form id="reviewForm" class="p-3 border rounded bg-white shadow-sm">
+            <div class="mb-3">
+                <label for="name" class="form-label">Your Name</label>
+                <input type="text" id="name" class="form-control" placeholder="Enter your name" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="rating" class="form-label">Rating</label>
+                <select id="rating" class="form-select" required>
+                    <option value="">Choose...</option>
+                    <option value="5">⭐⭐⭐⭐⭐</option>
+                    <option value="4">⭐⭐⭐⭐</option>
+                    <option value="3">⭐⭐⭐</option>
+                    <option value="2">⭐⭐</option>
+                    <option value="1">⭐</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="title" class="form-label">Review Title</label>
+                <input type="text" id="title" class="form-control" placeholder="Write a short title" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="body" class="form-label">Review Body</label>
+                <textarea id="body" class="form-control" rows="3" placeholder="Share your thoughts..."
+                    required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-dark w-100">Submit Review</button>
+        </form>
+    </div>
+
+    <script>
+        const form = document.getElementById('reviewForm');
+        const container = document.getElementById('reviewsContainer');
+
+        // Load saved reviews
+        const loadReviews = () => {
+            container.innerHTML = '';
+            const reviews = JSON.parse(localStorage.getItem('reviews')) || [];
+            reviews.reverse().forEach(r => addReviewCard(r, false));
+        };
+
+        // Add a review card
+        const addReviewCard = (r, save = true) => {
+            const card = document.createElement('div');
+            card.classList.add('card', 'mb-3', 'review-card');
+            card.innerHTML = `
+        <div class="card-body">
+          <div class="mb-2">
+            ${'<i class="bi bi-star-fill text-warning"></i>'.repeat(r.rating)}${'<i class="bi bi-star text-warning"></i>'.repeat(5 - r.rating)}
+          </div>
+          <h6>${r.title}</h6>
+          <p class="text-muted small">${r.body}</p>
+          <div class="d-flex align-items-center">
+            <div class="avatar me-2">${r.name.charAt(0).toUpperCase()}</div>
+            <small>${r.name} • ${r.date}</small>
+          </div>
+        </div>`;
+            container.prepend(card);
+
+            if (save) {
+                const reviews = JSON.parse(localStorage.getItem('reviews')) || [];
+                reviews.push(r);
+                localStorage.setItem('reviews', JSON.stringify(reviews));
+            }
+        };
+
+        // Handle form submit
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const r = {
+                name: document.getElementById('name').value,
+                rating: parseInt(document.getElementById('rating').value),
+                title: document.getElementById('title').value,
+                body: document.getElementById('body').value,
+                date: new Date().toLocaleDateString()
+            };
+            addReviewCard(r);
+            form.reset();
+        });
+
+        loadReviews();
+    </script>
+
+    <script>
+        const form = document.getElementById('reviewForm');
+        const container = document.getElementById('reviewsContainer');
+
+        // 🔹 1. Load all saved reviews when the page opens
+        function loadReviews() {
+            container.innerHTML = '';
+            const reviews = JSON.parse(localStorage.getItem('reviews')) || [];
+            reviews.reverse().forEach(r => renderReview(r, false));
+        }
+
+        // 🔹 2. Create a review card in the DOM
+        function renderReview(review, save = true) {
+            const card = document.createElement('div');
+            card.classList.add('card', 'mb-3', 'review-card');
+            card.innerHTML = `
+      <div class="card-body">
+        <div class="mb-2">
+          ${'<i class="bi bi-star-fill text-warning"></i>'.repeat(review.rating)}
+          ${'<i class="bi bi-star text-warning"></i>'.repeat(5 - review.rating)}
+        </div>
+        <h6>${review.title}</h6>
+        <p class="text-muted small">${review.body}</p>
+        <div class="d-flex align-items-center">
+          <div class="avatar me-2">${review.name.charAt(0).toUpperCase()}</div>
+          <small>${review.name} • ${review.date}</small>
+        </div>
+      </div>
+    `;
+            container.prepend(card);
+
+            // 🔹 3. Save to localStorage if needed
+            if (save) {
+                const reviews = JSON.parse(localStorage.getItem('reviews')) || [];
+                reviews.push(review);
+                localStorage.setItem('reviews', JSON.stringify(reviews));
+            }
+        }
+
+        // 🔹 4. Handle form submission
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const review = {
+                name: document.getElementById('name').value,
+                rating: parseInt(document.getElementById('rating').value),
+                title: document.getElementById('title').value,
+                body: document.getElementById('body').value,
+                date: new Date().toLocaleDateString()
+            };
+
+            renderReview(review);
+            form.reset(); // Clear inputs
+        });
+
+        // 🔹 5. Run when page loads
+        loadReviews();
+    </script>
+
+</body>
+
+</html>

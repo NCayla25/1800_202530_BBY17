@@ -1,0 +1,62 @@
+@font-face {
+  font-family: "Bitcount Grid Single";
+  src: url("fonts/BitcountGridSingle.ttf") format("truetype");
+}
+
+
+body {
+      background-color: #f0f8f7;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .app-header {
+      background-color: #0d9488; /* teal */
+      color: white;
+      padding: 0.8rem 1rem;
+      border-radius: 12px;
+      margin-bottom: 1rem;
+    }
+
+    .card {
+      border: none;
+      border-radius: 15px;
+      background-color: #ffffff;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-dark {
+      background-color: #2cffed73;
+      border: none;
+    }
+
+    .btn-dark:hover {
+      background-color: #0f766e;
+    }
+
+    .form-control, .form-select {
+      border-radius: 10px;
+      border: 1px solid #a7f3d0;
+    }
+
+    .form-control:focus, .form-select:focus {
+      border-color: #0d9488;
+      box-shadow: 0 0 0 0.2rem rgba(13, 148, 136, 0.25);
+    }
+
+    .avatar {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      background-color: #a7f3d0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: #065f46;
+    }
+
+    .review-card {
+      border-left: 5px solid #0d9488;
+    }
+
+    
