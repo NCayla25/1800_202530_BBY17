@@ -1,106 +1,80 @@
-// VERY BAD CODE FROM FIRST MAP METHOD IDEA
-let map = [
-  [3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-  [3, 0, 0, 0, 0, 0, 0, 0, 0, 3],
-  [3, 0, 0, 0, 0, 0, 0, 0, 0, 3],
-  [3, 0, 1, 0, 0, 0, 0, 0, 0, 3],
-  [3, 0, 3, 0, 0, 0, 0, 0, 0, 3],
-  [3, 0, 0, 0, 0, 0, 0, 0, 0, 3],
-  [3, 0, 0, 0, 0, 0, 2, 0, 0, 3],
-  [3, 0, 0, 0, 0, 0, 0, 0, 0, 3],
-  [3, 0, 0, 0, 0, 0, 0, 0, 0, 3],
-  [3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-];
+import mapboxgl from "mapbox-gl";
+import "mapbox-gl/dist/mapbox-gl.css";
+function showMap() {
 
-let curLocation, targetLocation;
-for (let i = 0; i < map.length; i++) {
-  for (let j = 0; j < map[i].length; j++) {
-    if (map[i][j] === 1) {
-      curLocation = [i, j];
-      console.log("Current Location: ", curLocation);
-    }
-    if (map[i][j] === 2) {
-      targetLocation = [i, j];
-      console.log("Target Location: ", targetLocation);
-    }
-  }
-}
+    //--------------------------------------------------------------
+    // Initialize the Mapbox map
+    // With your access token from .env and initial settings
+    //--------------------------------------------------------------
+    
+    mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN; // put token in .env
+    
+    // BCIT location 49.25324576104826, -123.00163752324765  Centered at BCIT
+    const map = new mapboxgl.Map({
+        container: "map",                        // <div id="map"></div>
+        style: "mapbox://styles/mapbox/standard",// any Mapbox style
+        center: [-123.00163752324765, 49.25324576104826],
+        zoom: 10
+    });
+    /*
+    const map = new mapboxgl.Map({
+      container: 'map',
+      style: {
+        version: 8,
+        sources: {
+          'se-12': {
+            type: 'image',
+            url: './../images/se12.jpg',  // your image file
+            coordinates: [
+              [0, 2965],   // top-left
+              [4674, 2965], // top-right
+              [4674, 0],   // bottom-right
+              [0, 0]       // bottom-left
+            ]
+          }
+        }
+      },
+      center: [-123.00163752324765, 49.25324576104826],  // start centered on the map
+      zoom: 1,
+      maxZoom: 5,
+      minZoom: 0
+    });*/
+    //------------------------------------------------------------------------
+    // Add controls to the map here, and keep things organized
+    // You can call additional controls/setup functions from here.
+    //------------------------------------------------------------------------
+    addControls();
+    function addControls() {
+        // Add zoom and rotation controls to the map.
+        map.addControl(new mapboxgl.NavigationControl());
 
-var lastMove = "";
-while (map[targetLocation[0]][targetLocation[1]] !== 1) {
-  if (
-    curLocation[0] < targetLocation[0] &&
-    map[curLocation[0] + 1][curLocation[1]] !== 3
-  ) {
-    //move down
-    map[curLocation[0] + 1][curLocation[1]] = 1;
-    curLocation[0] += 1;
-    lastMove = "down";
-  } else if (
-    curLocation[0] > targetLocation[0] &&
-    map[curLocation[0] - 1][curLocation[1]] !== 3
-  ) {
-    //move up
-    map[curLocation[0] - 1][curLocation[1]] = 1;
-    curLocation[0] -= 1;
-    lastMove = "up";
-  } else if (
-    curLocation[1] < targetLocation[1] &&
-    map[curLocation[0]][curLocation[1] + 1] !== 3
-  ) {
-    //move right
-    map[curLocation[0]][curLocation[1] + 1] = 1;
-    curLocation[1] += 1;
-    lastMove = "right";
-  } else if (
-    curLocation[1] > targetLocation[1] &&
-    map[curLocation[0]][curLocation[1] - 1] !== 3
-  ) {
-    //move left
-    map[curLocation[0]][curLocation[1] - 1] = 1;
-    curLocation[1] -= 1;
-    lastMove = "left";
-  } else {
-    //blocked, move any possible direction
-    if (map[curLocation[0] + 1][curLocation[1]] !== 3 && lastMove !== "up") {
-      //move down
-      map[curLocation[0] + 1][curLocation[1]] = 1;
-      curLocation[0] += 1;
-      lastMove = "down";
-    } else if (
-      map[curLocation[0] - 1][curLocation[1]] !== 3 &&
-      lastMove !== "down"
-    ) {
-      //move up
-      map[curLocation[0] - 1][curLocation[1]] = 1;
-      curLocation[0] -= 1;
-      lastMove = "up";
-    } else if (
-      map[curLocation[0]][curLocation[1] + 1] !== 3 &&
-      lastMove !== "left"
-    ) {
-      //move right
-      map[curLocation[0]][curLocation[1] + 1] = 1;
-      curLocation[1] += 1;
-      lastMove = "right";
-    } else if (
-      map[curLocation[0]][curLocation[1] - 1] !== 3 &&
-      lastMove !== "right"
-    ) {
-      //move left
-      map[curLocation[0]][curLocation[1] - 1] = 1;
-      curLocation[1] -= 1;
-      lastMove = "left";
-    } else {
-      console.log("Something went very wrong");
-      break;
+        // Add other controls here as needed
+        //addGeolocationControl(map);
+        //addGeoCoderControl(map);
     }
-  }
-}
 
-for (let i = 0; i < map.length; i++) {
-  for (let j = 0; j < map[i].length; j++) {
-    process.stdout.write(map[i][j] + " ");
-  }
-  console.log();
+    //--------------------------------------------------------------
+    // Add layers, sources, etc. to the map, and keep things organized.
+    // You can call additional layers/setup functions from here.
+    // Run setupMap() once when the style loads.
+    //--------------------------------------------------------------
+    map.once("load", () => setupMap(map)); // run once for the initial style
+    function setupMap(map) {
+        map.addSource('se12', {
+            'type': 'raster',
+            'url': './images/se12.jpg',
+        });
+
+        map.addLayer({
+            'id': 'se12-layer',
+            'source': 'se12',
+            'type': 'raster'
+        });
+        //addUserPin(map);
+        //add other layers and stuff here
+        //addCustomLayer1(map);
+        //addCustomLayer2(map);
+        //addCustomLayer3(map);
+    }
 }
+showMap();
