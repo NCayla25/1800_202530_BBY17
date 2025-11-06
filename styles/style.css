@@ -36,11 +36,6 @@ footer nav ul li a.active {
     padding: 8px;
 }
 
-#map {
-    height: 100vh;
-    z-index: 1;
-}
-
 @media (min-width: 768px) {
     footer nav ul li a img {
         width: 40px;
