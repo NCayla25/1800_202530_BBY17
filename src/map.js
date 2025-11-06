@@ -1,5 +1,9 @@
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
+import { db } from "./firebaseConfig.js";
+import { doc, getDoc } from "firebase/firestore";
+import {collection, query, where, getDocs} from "firebase/firestore";
+
 function showMap() {
 
     //--------------------------------------------------------------
@@ -35,18 +39,54 @@ function showMap() {
         //addGeoCoderControl(map);
     }
 
-    // Adds marker to rm 322, change to add multiple through some for loop + db
-    let lng = -121.72558950141405;
-    let lat = 48.573977758379556;
-    const se12_322 = new mapboxgl.Marker()
-        .setLngLat([-121.72558950141405, 48.573977758379556])
-        .addTo(map);
-    se12_322.getElement().addEventListener("click", function (e) {
-      const popup = new mapboxgl.Popup({ closeOnClick: false })
-        .setLngLat([lng, lat])
-        .setHTML('<p>This is Room 322<br><a href="/reviews-app/index.html">More</a></p>')
-        .addTo(map);
-    })
+    // Get the document ID from the URL
+    function getDocIdFromUrl() {
+        const params = new URL(window.location.href).searchParams;
+        return params.get("docID");
+    }
+    // Fetch the room and display its contents (should be loop in future for multiple rooms)
+    async function displayRoomMarkers() {
+        const id = getDocIdFromUrl();
+
+        try {
+            const roomsRef = doc(db, "rooms", "se12-322");
+            const roomsSnap = await getDoc(roomsRef);
+
+            const rooms = roomsSnap.data();
+            const floor = rooms.floor;
+            const lat = rooms.lat;
+            const lng = rooms.lng;
+            const desc = rooms.desc;
+            const link = rooms.link;
+
+            const marker = new mapboxgl.Marker()
+                .setLngLat([lng, lat])
+                .addTo(map);
+            marker.getElement().addEventListener("click", function (e) {
+              const popup = new mapboxgl.Popup({ closeOnClick: false })
+                .setLngLat([lng, lat])
+                .setHTML(`<p>${desc}<br><a href="/reviews-app/${link}.html">See reviews</a></p>`)
+                .addTo(map);
+            })
+            map.addSource(`${floor}`, {
+              "type": "image",
+              "url": `./../images/${floor}.jpg`,
+              "coordinates": [
+                [-123, 49],
+                [-121, 49],
+                [-121, 48],
+                [-123, 48]
+              ]
+            });
+            map.addLayer({
+              "id": `${floor}`, //id
+              "type": "raster",
+              "source": `${floor}`
+            });
+        } catch (error) {
+            console.error("Error loading room marker:", error);
+        }
+    }
 
     //--------------------------------------------------------------
     // Add layers, sources, etc. to the map, and keep things organized.
@@ -70,21 +110,7 @@ function showMap() {
         "type": "raster",
         "source": "blank"
       });
-      map.addSource("se12-3", { // Change to display multiple, use some for loop
-        "type": "image",
-        "url": "./../images/se12-3.jpg",
-        "coordinates": [
-          [-123, 49],
-          [-121, 49],
-          [-121, 48],
-          [-123, 48]
-        ]
-      });
-      map.addLayer({
-        "id": "se12-3",
-        "type": "raster",
-        "source": "se12-3"
-      });
+      displayRoomMarkers();
       // Test function to grab coordinates
       // map.on("click", (e) => {
       //   document.getElementById('info').innerHTML = JSON.stringify(e.lngLat.wrap());
