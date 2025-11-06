@@ -59,13 +59,15 @@ export async function signupUser(name, email, password) {
   await updateProfile(user, { displayName: name });
 
   try {
-    await setDoc(doc(db, "user", user.uid), {
+    await setDoc(doc(db, "users", user.uid), {
       name: name,
       email: email,
       country: "Canada",
-      school: "BCIT"
+      school: "BCIT",
+      createdAt: new Date()
     });
     console.log("Firestore user document created successfully");
+
   } catch (error) {
     console.log("Error creating user document in Firestore: ", error);
   }
@@ -84,7 +86,7 @@ export async function signupUser(name, email, password) {
 // -------------------------------------------------------------
 export async function logoutUser() {
   await signOut(auth);
-  window.location.href = "index.html";
+  window.location.href = "login.html";
 }
 
 // -------------------------------------------------------------
@@ -104,12 +106,12 @@ export async function logoutUser() {
 // -------------------------------------------------------------
 export function checkAuthState() {
   onAuthStateChanged(auth, (user) => {
-    if (window.location.pathname.endsWith("main.html")) {
+    if (window.location.pathname.endsWith("map.html")) {
       if (user) {
         const displayName = user.displayName || user.email;
         $("#welcomeMessage").text(`Hello, ${displayName}!`);
       } else {
-        window.location.href = "index.html";
+        window.location.href = "login.html";
       }
     }
   });

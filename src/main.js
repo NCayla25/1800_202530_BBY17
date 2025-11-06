@@ -1,24 +1,29 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap";
-
-function sayHello() {}
-// document.addEventListener('DOMContentLoaded', sayHello);
-
-import {
-    onAuthReady
-} from "./authentication.js"
+import { onAuthReady } from "./authentication.js"
+import "./firebaseConfig.js";
+import "./loginSignup.js";
+import "../styles/style.css";
 
 function showDashboard() {
       const nameElement = document.getElementById("name-goes-here"); // the <h1> element to display "Hello, {name}"
+      const appContent = document.getElementById("app-content");
+
+      if (appContent) {
+        appContent.style.display = "none";
+      }
 
       // Wait for Firebase to determine the current authentication state.
       // onAuthReady() runs the callback once Firebase finishes checking the signed-in user.
       // The user's name is extracted from the Firebase Authentication object
       // You can "go to console" to check out current users. 
       onAuthReady((user) => {
+        const onLoginPage = window.location.pathname.includes("login.html");
+
           if (!user) {
-              // If no user is signed in → redirect back to login page.
-              location.href = "index.html";
+              if (!onLoginPage) {
+                location.href = "login.html";
+              }
               return;
           }
 
@@ -29,6 +34,10 @@ function showDashboard() {
           // Update the welcome message with their name/email.
           if (nameElement) {
               nameElement.textContent = `${name}!`;
+          }
+
+          if (appContent) {
+            appContent.style.display = "block";
           }
       });
 }

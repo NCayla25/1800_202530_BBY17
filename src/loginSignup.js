@@ -8,12 +8,11 @@
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap';
-import 'styles/style.css';
 import {
     loginUser,
     signupUser,
     authErrorMessage,
-} from 'authentication.js';
+} from './authentication.js';
 
 
 // --- Login and Signup Page ---
