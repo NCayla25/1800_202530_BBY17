@@ -1,7 +1,6 @@
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { db } from "./firebaseConfig.js";
-import { doc, getDoc } from "firebase/firestore";
 import {collection, query, where, getDocs} from "firebase/firestore";
 
 function showMap() {
@@ -13,7 +12,6 @@ function showMap() {
     
     mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN; // put token in .env
     
-    // BCIT location 49.25324576104826, -123.00163752324765  Centered at BCIT
     const map = new mapboxgl.Map({
         container: "map",                        // <div id="map"></div>
         style: "mapbox://styles/mapbox/light-v11",// any Mapbox style
@@ -25,6 +23,7 @@ function showMap() {
         zoom: 1,
         minZoom: 0
     });
+
     //------------------------------------------------------------------------
     // Add controls to the map here, and keep things organized
     // You can call additional controls/setup functions from here.
@@ -32,42 +31,18 @@ function showMap() {
     addControls();
     function addControls() {
         // Add zoom and rotation controls to the map.
-        map.addControl(new mapboxgl.NavigationControl());
-
-        // Add other controls here as needed
-        //addGeolocationControl(map);
-        //addGeoCoderControl(map);
+        const navControl = new mapboxgl.NavigationControl();
+        map.addControl(navControl);
+        map.removeControl(navControl, "top-right");
     }
 
-    // Get the document ID from the URL
-    function getDocIdFromUrl() {
-        const params = new URL(window.location.href).searchParams;
-        return params.get("docID");
-    }
     // Fetch the room and display its contents (should be loop in future for multiple rooms)
     async function displayRoomMarkers() {
-        const id = getDocIdFromUrl();
-
         try {
-            const roomsRef = doc(db, "rooms", "se12-322");
-            const roomsSnap = await getDoc(roomsRef);
+            const floor = localStorage.getItem("floorID");
+            const q = query(collection(db, "rooms"), where("floor", "==", floor));
+            const querySnapshot = await getDocs(q);
 
-            const rooms = roomsSnap.data();
-            const floor = rooms.floor;
-            const lat = rooms.lat;
-            const lng = rooms.lng;
-            const desc = rooms.desc;
-            const link = rooms.link;
-
-            const marker = new mapboxgl.Marker()
-                .setLngLat([lng, lat])
-                .addTo(map);
-            marker.getElement().addEventListener("click", function (e) {
-              const popup = new mapboxgl.Popup({ closeOnClick: false })
-                .setLngLat([lng, lat])
-                .setHTML(`<p>${desc}<br><a href="/reviews-app/${link}.html">See reviews</a></p>`)
-                .addTo(map);
-            })
             map.addSource(`${floor}`, {
               "type": "image",
               "url": `./../images/${floor}.jpg`,
@@ -79,13 +54,46 @@ function showMap() {
               ]
             });
             map.addLayer({
-              "id": `${floor}`, //id
+              "id": `${floor}`,
               "type": "raster",
               "source": `${floor}`
+            });
+            
+            querySnapshot.forEach((docSnap) => {
+
+              const rooms = docSnap.data();
+              const lat = rooms.lat;
+              const lng = rooms.lng;
+              const desc = rooms.desc;
+              const link = rooms.link;
+
+              const marker = new mapboxgl.Marker()
+                  .setLngLat([lng, lat])
+                  .addTo(map);
+              marker.getElement().addEventListener("click", function (e) { // need to make it so other pop ups close on click
+                const popup = new mapboxgl.Popup({closeOnClick: false, closeButton: true})
+                  .setLngLat([lng, lat])
+                  .setHTML(`<p>${desc}<br><a href="/reviews-app/${link}.html">See reviews</a></p>`)
+                  .addTo(map);
+                console.log("Popup added");
+              });
             });
         } catch (error) {
             console.error("Error loading room marker:", error);
         }
+    }
+
+    // adds buttons to go up down floors, need to change into buttons in the future or a hamburger menu factoring the multiple buildings
+    async function addUpDown() {
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "ArrowUp") {
+          localStorage.setItem("floorID", "se12-4");
+          this.location.reload();
+        } else if (e.key === "ArrowDown") {
+          localStorage.setItem("floorID", "se12-3");
+          this.location.reload();
+        }
+      })
     }
 
     //--------------------------------------------------------------
@@ -111,6 +119,7 @@ function showMap() {
         "source": "blank"
       });
       displayRoomMarkers();
+      addUpDown();
       // Test function to grab coordinates
       // map.on("click", (e) => {
       //   document.getElementById('info').innerHTML = JSON.stringify(e.lngLat.wrap());

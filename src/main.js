@@ -42,4 +42,12 @@ function showDashboard() {
       });
 }
 
+// Check if a floorID is in localStorage, defaults to se12-3
+function checkFloorID() {
+  if (!("floorID" in localStorage)){
+    localStorage.setItem('floorID', 'se12-3');
+  }
+}
+
 showDashboard();
+checkFloorID();
