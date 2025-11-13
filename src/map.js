@@ -36,7 +36,6 @@ function showMap() {
         map.removeControl(navControl, "top-right");
     }
 
-    // Fetch the room and display its contents (should be loop in future for multiple rooms)
     async function displayRoomMarkers() {
         try {
             const floor = localStorage.getItem("floorID");
@@ -122,7 +121,7 @@ function showMap() {
       addUpDown();
       // Test function to grab coordinates
       // map.on("click", (e) => {
-      //   document.getElementById('info').innerHTML = JSON.stringify(e.lngLat.wrap());
+      //   console.log(JSON.stringify(e.lngLat.wrap()));
       // });
     }
 }
