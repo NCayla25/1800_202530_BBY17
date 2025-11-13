@@ -4,6 +4,7 @@ import { onAuthReady } from "./authentication.js"
 import "./firebaseConfig.js";
 import "./loginSignup.js";
 import "../styles/style.css";
+import "bootstrap/dist/js/bootstrap.min.js";
 
 function showDashboard() {
       const nameElement = document.getElementById("name-goes-here"); // the <h1> element to display "Hello, {name}"
