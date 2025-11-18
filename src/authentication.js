@@ -64,7 +64,8 @@ export async function signupUser(name, email, password) {
       email: email,
       country: "Canada",
       school: "BCIT",
-      createdAt: new Date()
+      createdAt: new Date(),
+      markersToggled: true
     });
     console.log("Firestore user document created successfully");
 
