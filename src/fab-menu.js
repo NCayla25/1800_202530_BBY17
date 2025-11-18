@@ -12,8 +12,9 @@
                 <span class="fab-icon" aria-hidden="true">☰</span>
             </button>
             <div class="fab-menu" id="fab-menu" role="menu" aria-labelledby="fab-trigger">
+                <a href="map.html" role="menuitem" class="fab-item" tabindex="-1">Map</a>
                 <a href="profile.html" role="menuitem" class="fab-item" tabindex="-1">Profile</a>
-                <a href="reviews.html" role="menuitem" class="fab-item" tabindex="-1">Reviews</a>
+                <a href="./reviews-app/index.html" role="menuitem" class="fab-item" tabindex="-1">Reviews</a>
                 <a href="settings.html" role="menuitem" class="fab-item" tabindex="-1">Settings</a>
             </div>
             <div class="fab-backdrop" hidden></div>
@@ -26,6 +27,14 @@
         menu.setAttribute('hidden', '');
         const items = Array.from(menu.querySelectorAll('[role="menuitem"]'));
         const backdrop = root.querySelector('.fab-backdrop');
+
+        const currentPage = window.location.pathname.split("/").pop();
+        items.forEach(item => {
+            const href = item.getAttribute("href");
+            if (href === currentPage) {
+                item.style.display = "none";
+            }
+        });
 
         console.log({
             containerClassList: container.classList.value,

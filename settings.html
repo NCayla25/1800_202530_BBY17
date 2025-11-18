@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>HandiMap</title>
+        <meta name="handimap template" content="Handimap"/>
+
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+        <link rel="stylesheet" href="./styles/style.css">
+    </head>
+
+    <body>
+        <main>
+            <!-- Main content -->
+             <h1>Settings</h1>
+
+            <section class="settings-section">
+                <h2>Profile Information</h2>
+
+                <form id="profile-form">
+                    <label>
+                        Display Name:
+                        <input type="text" id="displayName" placeholder="Your name">
+                    </label>
+
+                    <label>
+                        Email:
+                        <input type="email" id="email" disabled>
+                    </label>
+
+                    <button type="submit" class="btn-primary">Save Changes</button>
+                </form>
+            </section>
+
+            <section class="settings-section">
+                <h2>Account</h2>
+                <button id="signout-btn" class="btn-danger">Sign Out</button>
+            </section>
+
+            <section class="settings-section">
+                <h2>More Settings</h2>
+                <p>More options coming soon...</p>
+            </section>
+
+        </main>
+
+        <div id="fab-menu-root"></div>
+        <script type="module" src="./src/fab-menu.js"></script>
+        <script type="module" src="./src/main.js"></script>
+        <script type="module" src="./src/settings.js"></script>
+    </body>
+</html>
