@@ -4,8 +4,8 @@
 <head>
     <title>HandiMap</title>
     <meta name="handimap template" content="Handimap" />
-
-        <link rel="stylesheet" href="styles/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="styles/style.css">
     </head>
     <body>
         <!-- MAPBOX -->
@@ -15,23 +15,25 @@
             <div class="container-fluid">
                 <span class="navbar-brand mb-0 h1">HandiMap</span>
                 <div class="dropdown">
-                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Floors
-                    <span class="caret"></span></button>
+                    <button class="btn btn-primary dropdown-toggle" 
+                            type="button" 
+                            data-bs-toggle="dropdown" 
+                            aria-expanded="false"> Floors
+                    </button>
                     <ul class="dropdown-menu">
-                        <li><a href="#">SE12 Floor 3</a></li>
-                        <li><a href="#">SE12 Floor 4</a></li>
+                        <li><div class="dropdown-item" id="se12-3">SE12 Floor 3</div></li>
+                        <li><div class="dropdown-item" id="se12-4">SE12 Floor 4</div></li>
                     </ul>
                 </div>
             </div>
         </nav>
-        <div id="info"></div>
-        <div id='map' class="container-fluid" style="height:100vh"></div>
 
     <!-- Map Script -->
     <script type="module" src="./src/map.js"></script>
     <script type="module" src="./src/main.js"></script>
     <div id="fab-menu-root"></div>
     <script src="./src/fab-menu.js"></script>
+    
 </body>
 
 </html>

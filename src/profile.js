@@ -25,7 +25,13 @@ function populateUserInfo() {
                     const { name = "", campus = "", city = "" } = userData;
 
                     document.getElementById("nameInput").value = name;
-                    document.getElementById("campusInput").value = campus;
+                    
+                    const campuses = document.getElementsByName("campus");
+                    for (let i = 0; i < campuses.length; i++) {
+                        if (campuses[i].value == campus) {
+                            campuses[i].checked = true;
+                        }
+                    }
                     document.getElementById("cityInput").value = city;
                 } else {
                     console.log("No such document!");
@@ -64,8 +70,14 @@ async function saveUserInfo() {
     //enter code here
 
     //a) get user entered values
-    const userName = document.getElementById('nameInput').value;       //get the value of the field with id="nameInput"
-    const userCampus = document.getElementById('campusInput').value;     //get the value of the field with id="schoolInput"
+    const userName = document.getElementById('nameInput').value;     //get the value of the field with id="nameInput"
+    let userCampusTemp = "";
+    if (document.querySelector(`input[id=campusInput1]:checked`)){
+        userCampusTemp = document.getElementById("campusInput1").value;
+    } else if (document.querySelector(`input[id=campusInput2]:checked`)) {
+        userCampusTemp = document.getElementById("campusInput2").value;
+    }
+    const userCampus = userCampusTemp;
     const userCity = document.getElementById('cityInput').value;       //get the value of the field with id="cityInput"
     //b) update user's document in Firestore
     await updateUserDocument(user.uid, userName, userCampus, userCity);
