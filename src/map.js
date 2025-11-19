@@ -69,16 +69,22 @@ function showMap() {
               const lng = rooms.lng;
               const desc = rooms.desc;
               const link = rooms.link;
-              const marker = new mapboxgl.Marker()
+              const e1 = document.createElement("div");
+              e1.className = "room-marker";
+              const popup = new mapboxgl.Popup({
+                closeOnClick: true, 
+                closeButton: false, 
+                closeOnMove: true,
+                focusAfterOpen: false})
+                .setLngLat([lng, lat])
+                .setHTML(`<p>${desc}<br><br>
+                  <a href="/reviews-app/${link}.html"><img src="./../images/question.png" alt="image"></a></p>`)
+                .addTo(map);
+              const marker = new mapboxgl.Marker(e1)
                   .setLngLat([lng, lat])
+                  .setPopup(popup)
                   .addTo(map);
-              marker.getElement().addEventListener("click", function (e) { // need to make it so other pop ups close on click
-                const popup = new mapboxgl.Popup({closeOnClick: false, closeButton: true})
-                  .setLngLat([lng, lat])
-                  .setHTML(`<p>${desc}<br><a href="/reviews-app/${link}.html">See reviews</a></p>`)
-                  .addTo(map);
-                console.log("Popup added");
-              });
+              e1.ariaExpanded = true;
             });
           }
       } catch (error) {
