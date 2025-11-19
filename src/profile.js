@@ -62,7 +62,7 @@ function editUserInfo() {
 //-------------------------------------------------------------
 document.querySelector('#saveButton').addEventListener('click', saveUserInfo);   //Add event listener for save button
 async function saveUserInfo() {
-    const user = auth.currentUser;   // ✅ get the currently logged-in user
+    const user = auth.currentUser;
     if (!user) {
         alert("No user is signed in. Please log in first.");
         return;
