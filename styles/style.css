@@ -87,10 +87,18 @@ input, select, textarea {
 }
 
 .splash-title {
-    font-size: 1.2rem;
+    font-size: 2.2rem;
     margin: 10px 0 20px;
+    font-weight: 700;
+    opacity: 1;
+    color: white;
+}
+
+.splash-tagline {
+    font-size: 1.2rem;
+    margin: 0;
     font-weight: 500;
-    opacity: 0.9;
+    color: white;
 }
 
 .splash-subtext {
@@ -98,6 +106,7 @@ input, select, textarea {
     margin-bottom: 32px;
     opacity: 0.85;
     line-height: 1.5;
+    color: white;
 }
 
 .splash-button {
@@ -267,6 +276,7 @@ input, select, textarea {
     font-weight: 600;
     cursor: pointer;
     box-shadow: var(--shadow-sm);
+    transition: 0.2s ease;
 }
 
 .btn-danger:hover {
