@@ -22,23 +22,25 @@
      <div id="app-content">
     
     <!-- Welcome -->
-    <div class="px-4 py-5 my-5 text-center">
-        <h1 class="display-5 fw-bold">Welcome to HandiMap</h1>
-        <div class="col-lg-6 mx-auto">
-            <p class="lead mb-4">This is the first step to making your BCIT experience that much better!</p>
-            <h2>Your guide to an accessible world.</h2>
-            <div class="d-grid justify-content-sm-center">
-                <!-- Make this button clickable, using onclick event listener -->
-                <button onclick="window.location.href='login.html'" type="button" class="btn btn-info btn-lg">Login/Signup</button>
-            </div>
-        </div>
+    <div class="splash-container">
+      <div class="splash-content">
+        <img class="splash-logo" src="/images/logo.png" alt="HandiMap Logo">
+
+        <h1 class="splash-title">Welcome to HandiMap</h1>
+        <p class="splash-tagline">Your guide to an accessible world.</p>
+
+        <p class="splash-subtext">
+          Making your BCIT experience easier, safer, and more accessible - one step at a time.
+        </p>
+
+        <button onclick="window.location.href='login.html'" class="splash-button">Login / Signup</button>
+      </div>
     </div>
     <!---------------------------------------------->
     <!-- Your own JavaScript functions go here    -->
     <!---------------------------------------------->
 
     <!-- Link to scripts of your own -->
-    <script type="module" src="./src/main.js"></script>
-    </div>
+    
   </body>
 </html>
