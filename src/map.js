@@ -1,7 +1,8 @@
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { db } from "./firebaseConfig.js";
-import {collection, query, where, getDocs} from "firebase/firestore";
+import {collection, query, where, getDocs, doc, getDoc} from "firebase/firestore";
+import { auth } from "./firebaseConfig";
 
 function showMap() {
 
@@ -36,36 +37,38 @@ function showMap() {
         map.removeControl(navControl, "top-right");
     }
 
-    async function displayRoomMarkers() {
-        try {
-            const floor = localStorage.getItem("floorID");
-            const q = query(collection(db, "rooms"), where("floor", "==", floor));
-            const querySnapshot = await getDocs(q);
-
-            map.addSource(`${floor}`, {
-              "type": "image",
-              "url": `./../images/${floor}.jpg`,
-              "coordinates": [
-                [-123, 49],
-                [-121, 49],
-                [-121, 48],
-                [-123, 48]
-              ]
-            });
-            map.addLayer({
-              "id": `${floor}`,
-              "type": "raster",
-              "source": `${floor}`
-            });
-            
+    async function displayFloor() {
+      try {
+          const floor = localStorage.getItem("floorID");
+          const q = query(collection(db, "rooms"), where("floor", "==", floor));
+          const querySnapshot = await getDocs(q);
+          map.addSource(`${floor}`, {
+            "type": "image",
+            "url": `./../images/${floor}.jpg`,
+            "coordinates": [
+              [-123, 49],
+              [-121, 49],
+              [-121, 48],
+              [-123, 48]
+            ]
+          });
+          map.addLayer({
+            "id": `${floor}`,
+            "type": "raster",
+            "source": `${floor}`
+          });
+          
+          const user = auth.currentUser;
+          const userRef = doc(db, "users", user.uid);
+          const userSnap = await getDoc(userRef);
+          const userData = userSnap.data();
+          if (userData.markersToggled) {
             querySnapshot.forEach((docSnap) => {
-
               const rooms = docSnap.data();
               const lat = rooms.lat;
               const lng = rooms.lng;
               const desc = rooms.desc;
               const link = rooms.link;
-
               const marker = new mapboxgl.Marker()
                   .setLngLat([lng, lat])
                   .addTo(map);
@@ -77,24 +80,22 @@ function showMap() {
                 console.log("Popup added");
               });
             });
-        } catch (error) {
-            console.error("Error loading room marker:", error);
-        }
+          }
+      } catch (error) {
+          console.error("Error loading:", error);
+      }
     }
+    
 
-    // adds buttons to go up down floors, need to change into buttons in the future or a hamburger menu factoring the multiple buildings
-    async function addUpDown() {
-      document.addEventListener("keydown", function (e) {
-        if (e.key === "ArrowUp") {
-          localStorage.setItem("floorID", "se12-4");
-          this.location.reload();
-        } else if (e.key === "ArrowDown") {
-          localStorage.setItem("floorID", "se12-3");
-          this.location.reload();
-        }
-      })
+    async function dropdownItems() {
+      const items = document.getElementsByClassName("dropdown-item");
+      for (let i = 0; i < items.length; i++) {
+        items[i].addEventListener("click", function (e) {
+          localStorage.setItem("floorID", this.id);
+          document.location.reload();
+        });
+      }
     }
-
     //--------------------------------------------------------------
     // Add layers, sources, etc. to the map, and keep things organized.
     // You can call additional layers/setup functions from here.
@@ -117,8 +118,8 @@ function showMap() {
         "type": "raster",
         "source": "blank"
       });
-      displayRoomMarkers();
-      addUpDown();
+      displayFloor();
+      dropdownItems();
       // Test function to grab coordinates
       // map.on("click", (e) => {
       //   console.log(JSON.stringify(e.lngLat.wrap()));
