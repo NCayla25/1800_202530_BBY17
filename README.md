@@ -1,10 +1,8 @@
-# Elmo Hikes
+# HandiMap
 
 
 ## Overview
-Elmo Bob is a client-side JavaScript web application that helps users discover and explore hiking trails. The app displays a curated list of hike trails, each with details such as name, location, difficulty, and an image. Users can browse the list and mark their favorite trails for easy access later.
-
-Developed for the COMP 1800 course, this project applies User-Centred Design practices and agile project management, and demonstrates integration with Firebase backend services for storing user favorites.
+Our team BBY17 is developing a web app named HandiMap to help students with accessibility needs at BCIT to navigate accessible paths around campus with an interactive map and open-sourced reviews.
 
 ---
 
