@@ -81,6 +81,9 @@ function showMap() {
                 .setHTML(`<p>${desc}<br><br>
                   <a href="/reviews-app/${link}.html"><img src="./../images/question.png" alt="image"></a></p>`)
                 .addTo(map);
+              popup.on("open", () => {
+                localStorage.setItem("roomID", docSnap.id);
+              });
               const marker = new mapboxgl.Marker(e1)
                   .setLngLat([lng, lat])
                   .setPopup(popup)
