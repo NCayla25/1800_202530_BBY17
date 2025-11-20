@@ -18,11 +18,12 @@ function showMap() {
         style: "mapbox://styles/mapbox/light-v11",// any Mapbox style
         center: [-122, 48.5],
         maxBounds: [
-          [-122.75, 48.2],
-          [-121.25, 48.8] 
+          [-123, 48.2],
+          [-121, 48.8] 
         ],
-        zoom: 1,
-        minZoom: 0
+        zoom: 10,
+        minZoom: 10,
+        maxZoom: 12
     });
 
     //------------------------------------------------------------------------
