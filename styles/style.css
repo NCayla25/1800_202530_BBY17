@@ -296,6 +296,12 @@ input, select, textarea {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
 }
+
+.dropdown-menu {
+  max-height: 300px;
+  overflow-y: scroll;
+}
+
 .room-marker {
     background-image: url("./../images/click.png");
     background-size: cover;
