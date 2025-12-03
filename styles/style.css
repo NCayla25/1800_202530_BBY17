@@ -302,7 +302,13 @@ input, select, textarea {
   overflow-y: scroll;
 }
 
-.room-marker {
+#help-button {
+    height: 50px;
+    margin: 0px;
+    padding: 0px;
+}
+
+.room-marker { /* clickable map marker */
     background-image: url("./../images/click.png");
     background-size: cover;
     width: 50px;
@@ -311,7 +317,7 @@ input, select, textarea {
     cursor: pointer;
 }
 
-.mapboxgl-popup-content {
+.mapboxgl-popup-content { /* box that pops up */
     color: #FFFFFF;
     background-color: #0d6efd;
     border-color: #0d6efd;
@@ -324,20 +330,16 @@ input, select, textarea {
     line-height: 2.3em;
 }
 
-.mapboxgl-popup-content p {
+.mapboxgl-popup-content p { /* text in popup */
     font-size: 2em;
 }
 
-.mapboxgl-popup-content a {
-    color: #FFFFFF;
-}
-
-.mapboxgl-popup-content img {
+.mapboxgl-popup-content img { /* review button icon */
     width: 50%;
     height: 50%;
 }
 
-.mapboxgl-popup-anchor-top .mapboxgl-popup-tip,
+.mapboxgl-popup-anchor-top .mapboxgl-popup-tip, /* triangle at bottom of pop up in 4 directions */
 .mapboxgl-popup-anchor-top-left .mapboxgl-popup-tip,
 .mapboxgl-popup-anchor-top-right .mapboxgl-popup-tip {
     border-bottom-color: #0d6efd;
