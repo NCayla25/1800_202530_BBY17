@@ -19,23 +19,54 @@
     <main>
         <!-- Main content -->
         <div class="page-container card">
-            <h1>User Profile </h1>
+            <h1>User Profile</h1>
             <form>
+                <div class="profile-pic-section">
+                    <img id="profileImage" src="./images/elmo.jpg" alt="Profile Picture"
+                        style="width:120px; height:120px; border-radius:50%; object-fit:cover;" />
+
+                    <input type="file" id="profileFileInput" class="file-input-hidden" accept="image/*">
+
+                    <button type="button" id="uploadButton" class="btn-secondary hidden">
+                        Change Profile Picture
+                    </button>
+                </div>
                 <fieldset class="mb-3" id="personalInfoFields" disabled>
+
+
                     <div class="form-group">
                         <label><b>Name</b></label>
                         <input type="text" id="nameInput" class="form-control" placeholder="Enter your name">
                     </div>
                     <div class="form-group">
                         <label><b>Campus</b></label><br>
-                        <input type="radio" id="campusInput1" placeholder="Burnaby" value="burnaby" name="campus" style="display:inline; width:auto;">
+                        <input type="radio" id="campusInput1" placeholder="Burnaby" value="burnaby" name="campus"
+                            style="display:inline; width:auto;">
                         <label for="burnaby">Burnaby</label><br>
-                        <input type="radio" id="campusInput2" placeholder="Downtown" value="downtown" name="campus" style="display:inline; width:auto;">
+                        <input type="radio" id="campusInput2" placeholder="Downtown" value="downtown" name="campus"
+                            style="display:inline; width:auto;">
                         <label for="downtown">Downtown</label>
                     </div>
                     <div class="form-group">
                         <label><b>City</b></label>
                         <input type="text" id="cityInput" class="form-control" placeholder="Enter your city">
+                    </div>
+
+                    <div class="form-group">
+                        <label><b>Mobility Aid:</b></label>
+                        <select class="form-control" id="mobilityAid">
+                            <option value="Wheelchair">Wheelchair</option>
+                            <option value="Walker">Walker</option>
+                            <option value="Crutches">Crutches</option>
+                            <option value="Cane">Cane</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Frequent Routes:</label>
+                        <textarea class="form-control" id="frequentRoutes"
+                            placeholder="e.g. Library to Cafeteria, Gym to Elevator..."></textarea>
                     </div>
                 </fieldset>
                 <div class="d-flex justify-content-end mt-5">
@@ -49,7 +80,6 @@
 
     <div id="fab-menu-root"></div>
     <script type="module" src="./src/fab-menu.js"></script>
-
     <script type="module" src="./src/main.js"></script>
     <script type="module" src="./src/profile.js"></script>
 </body>
