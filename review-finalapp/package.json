@@ -1,0 +1,20 @@
+{
+  "name": "reviews-app",
+  "version": "1.0.0",
+  "description": "Accessibility review app",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [],
+  "author": "Heebba Salman",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^2.2.1",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "vite": "^7.2.4"
+  }
+}
