@@ -81,7 +81,7 @@ function showMap() {
                 focusAfterOpen: false})
                 .setLngLat([lng, lat])
                 .setHTML(`<p>${desc}<br><br>
-                  <a href="/review-finalapp/${link}.html"><img src="./../images/question.png" alt="image"></a></p>`)
+                  <a href="/review-finalapp/room-reviews.html"><img src="./../images/question.png" alt="image"></a></p>`)
                 .addTo(map);
               popup.on("open", () => {
                 localStorage.setItem("roomID", docSnap.id);

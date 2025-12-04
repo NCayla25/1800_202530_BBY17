@@ -84,8 +84,7 @@
 
   <script>
     // Get room from URL
-    const params = new URLSearchParams(window.location.search);
-    const room = params.get('room') || 'Unknown Room';
+    const room = localStorage.getItem("roomID");
     document.getElementById('roomHeader').textContent = room;
 
     // Thumbs up/down selection logic
