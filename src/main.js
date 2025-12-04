@@ -31,7 +31,6 @@ function showDashboard() {
           // Use their display name if available, otherwise show their email.
           const name = user.displayName || user.email;
 
-          // Update the welcome message with their name/email.
           if (nameElement) {
               nameElement.textContent = `${name}!`;
           }
