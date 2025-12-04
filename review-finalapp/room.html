@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Choose the Room</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container py-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <a href="locationf.html" class="text-dark"><i class="bi bi-arrow-left fs-4"></i></a>
+      <h5 id="roomHeader" class="m-0">Choose the room</h5>
+      <i class="bi bi-search fs-4"></i>
+    </div>
+
+    <div class="input-group mb-4">
+      <span class="input-group-text bg-transparent border-0"><i class="bi bi-search"></i></span>
+      <input id="roomSearch" class="form-control border rounded-pill" placeholder="Search rooms">
+    </div>
+
+    <div id="roomList" class="d-grid gap-3"></div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const building = (params.get('building') || '').toUpperCase();
+
+    const ROOMS_BY_BUILDING = {
+      // Use the room numbers exactly as shown on the map (no generic/descriptive suffixes)
+      SW1: ['SW1 101', 'SW1 102', 'SW1 201', 'SW1 315', 'SW1 410'],
+      SW3: ['SW3 110', 'SW3 204', 'SW3 215', 'SW3 305', 'SW3 402'],
+      NE1: ['NE1 115', 'NE1 130', 'NE1 210', 'NE1 220', 'NE1 301'],
+      SE12: ['SE12 100', 'SE12 205', 'SE12 250', 'SE12 301', 'SE12 410']
+    };
+
+    const header = document.getElementById('roomHeader');
+    const searchInput = document.getElementById('roomSearch');
+    const roomList = document.getElementById('roomList');
+
+    function renderRooms(list) {
+      roomList.innerHTML = '';
+      if (!list || list.length === 0) {
+        roomList.innerHTML = `<div class="text-muted">No rooms found for ${building}.</div>`;
+        return;
+      }
+      list.forEach(room => {
+        const link = document.createElement('a');
+        link.className = 'btn btn-light border py-2 text-start';
+        link.textContent = room;
+        const url = new URL('results.html', location.href);
+        url.searchParams.set('building', building);
+        url.searchParams.set('room', room);
+        link.href = url.toString();
+        roomList.appendChild(link);
+      });
+    }
+
+    header.textContent = building ? `Choose the room — ${building}` : 'Choose the room';
+    const allRooms = ROOMS_BY_BUILDING[building];
+    renderRooms(allRooms);
+
+    searchInput.addEventListener('input', e => {
+      const q = e.target.value.toLowerCase();
+      const filtered = (allRooms || []).filter(r => r.toLowerCase().includes(q));
+      renderRooms(filtered);
+    });
+  </script>
+</body>
+</html>
