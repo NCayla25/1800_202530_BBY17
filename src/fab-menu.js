@@ -14,7 +14,7 @@
             <div class="fab-menu" id="fab-menu" role="menu" aria-labelledby="fab-trigger">
                 <a href="map.html" role="menuitem" class="fab-item" tabindex="-1">Map</a>
                 <a href="profile.html" role="menuitem" class="fab-item" tabindex="-1">Profile</a>
-                <a href="./reviews-app/index.html" role="menuitem" class="fab-item" tabindex="-1">Reviews</a>
+                <a href="./review-finalapp/index.html" role="menuitem" class="fab-item" tabindex="-1">Reviews</a>
                 <a href="settings.html" role="menuitem" class="fab-item" tabindex="-1">Settings</a>
             </div>
             <div class="fab-backdrop" hidden></div>
