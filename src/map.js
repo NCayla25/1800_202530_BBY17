@@ -18,11 +18,11 @@ function showMap() {
         style: "mapbox://styles/mapbox/light-v11",// any Mapbox style
         center: [-122, 48.5],
         maxBounds: [
-          [-123, 48.2],
-          [-121, 48.8] 
+          [-123, 48],
+          [-121, 49] 
         ],
         zoom: 10,
-        minZoom: 10,
+        minZoom: 9,
         maxZoom: 12
     });
 
@@ -41,6 +41,8 @@ function showMap() {
     async function displayFloor() {
       try {
           const floor = localStorage.getItem("floorID");
+          const floorMessage = floor.substring(0, 4).toUpperCase() + " Floor " + floor.charAt(5);
+          document.getElementById("navbar-message").innerHTML = floorMessage;
           const q = query(collection(db, "rooms"), where("floor", "==", floor));
           const querySnapshot = await getDocs(q);
           map.addSource(`${floor}`, {
@@ -117,10 +119,10 @@ function showMap() {
         "type": "image",
         "url": "./../images/blank.jpg",
         "coordinates": [
-          [-124, 50],
-          [-120, 50],
-          [-120, 47],
-          [-124, 47]
+          [-125, 50],
+          [-119, 50],
+          [-119, 47],
+          [-125, 47]
         ]
       });
       map.addLayer({
@@ -130,10 +132,19 @@ function showMap() {
       });
       displayFloor();
       dropdownItems();
-      // Test function to grab coordinates
+      // Test function to grab coordinates 48.55835893821671
       // map.on("click", (e) => {
       //   console.log(JSON.stringify(e.lngLat.wrap()));
       // });
     }
 }
-showMap();
+
+document.addEventListener("DOMContentLoaded", function () {
+  showMap();
+
+  // Help modal shows automatically if when the user views the page for the first time
+  if (!("helpShown" in localStorage)){
+    localStorage.setItem('helpShown', true);
+    document.querySelector('[data-bs-target="#helpModal"]').click();
+  }
+});
