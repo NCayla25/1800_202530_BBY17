@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>HandiMap</title>
+    <meta charset="utf-8"/>
+    <meta name="handimap template" content="Handimap" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <script type="module" crossorigin src="/assets/map-CLbRZG2C.js"></script>
+      <link rel="modulepreload" crossorigin href="/assets/modulepreload-polyfill-B5Qt9EMX.js">
+      <link rel="modulepreload" crossorigin href="/assets/main-FuKyY6VI.js">
+      <link rel="modulepreload" crossorigin href="/assets/fab-menu-Cwgyy1vS.js">
+      <link rel="stylesheet" crossorigin href="/assets/main-C11chwFa.css">
+      <link rel="stylesheet" crossorigin href="/assets/style-BBPP6_QE.css">
+      <link rel="stylesheet" crossorigin href="/assets/map-vV3jbIp0.css">
+    </head>
+    <body>
+        <!-- MAPBOX -->
+        <div id='map' class="container-fluid position-absolute top-0 start-0" style="height:100vh"></div>
+
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <span class="navbar-brand mb-0 h1" id="navbar-message"></span>
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle dropstart" 
+                            type="button" 
+                            data-bs-toggle="dropdown" 
+                            aria-expanded="false"> Floors
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><div class="dropdown-item" id="se12-3">SE12 Floor 3</div></li>
+                        <li><div class="dropdown-item" id="se12-4">SE12 Floor 4</div></li>
+                    </ul>
+                    <img id="help-button" type="button" data-bs-toggle="modal" data-bs-target="#helpModal" src="/assets/question-BVxMqU-5.png">
+                    <div class="modal fade" id="helpModal" tabindex="-1" aria-labelledby="helpModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="helpModalLabel">Map Info</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Welcome to HandiMap!<br><br>This is a work in progress project created by BBY-17 with the goal
+                                    of creating an interactive map of BCIT campuses for people with accessibility needs to find their
+                                    way around campus and find reviews about their classroom's accessibility.<br><br>
+                                    How to operate (Mobile):<ul>
+                                        <li>Pan the camera by moving your fingers across the screen</li>
+                                        <li>Zoom in/out by pinching/separating your fingers on the screen</li>
+                                        <li>Edit map settings from the hamburger menu > settings > map settings</li>
+                                        <li>View reviews from a classroom on the map by tapping its marker (must have markers enabled)</li>
+                                    </ul><br>
+                                    Future plans:<ul>
+                                        <li>Mapped elevator locations with reviews</li>
+                                        <li>Routes that connect classrooms to each other</li>
+                                        <li>More floors and buildings (including DTC)</li>
+                                    </ul>
+                                </div>
+                                <div class="modal-footer"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+    <!-- Map Script -->
+    <div id="fab-menu-root"></div>
+    
+</body>
+
+</html>

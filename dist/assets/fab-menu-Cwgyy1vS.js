@@ -1,0 +1,14 @@
+(function(){const a=document.getElementById("fab-menu-root")||function(){const e=document.createElement("div");return e.id="fab-menu-root",document.body.appendChild(e),e}();a.innerHTML=`
+        <div class="fab-container" data-fab>
+            <button class="fab-button" aria-label="Open menu" aria-haspopup="menu" aria-expanded="false" aria-controls="fab-menu" id="fab-trigger">
+                <span class="fab-icon" aria-hidden="true">☰</span>
+            </button>
+            <div class="fab-menu" id="fab-menu" role="menu" aria-labelledby="fab-trigger">
+                <a href="map.html" role="menuitem" class="fab-item" tabindex="-1">Map</a>
+                <a href="profile.html" role="menuitem" class="fab-item" tabindex="-1">Profile</a>
+                <a href="room-reviews.html" role="menuitem" class="fab-item" tabindex="-1">Reviews</a>
+                <a href="settings.html" role="menuitem" class="fab-item" tabindex="-1">Settings</a>
+            </div>
+            <div class="fab-backdrop" hidden></div>
+        </div>
+        `,a.querySelector(".fab-container").classList.remove("open");const n=a.querySelector("[data-fab]"),r=a.querySelector("#fab-trigger"),i=a.querySelector("#fab-menu");i.setAttribute("hidden","");const t=Array.from(i.querySelectorAll('[role="menuitem"]')),c=a.querySelector(".fab-backdrop"),m=window.location.pathname.split("/").pop();t.forEach(e=>{e.getAttribute("href")===m&&(e.style.display="none")}),console.log({containerClassList:n.classList.value,menuHidden:i.hasAttribute("hidden"),backdropHidden:c.hidden});function b(){n.classList.add("open"),r.setAttribute("aria-expanded","true"),i.removeAttribute("hidden"),c.hidden=!1,t[0]?.focus(),document.addEventListener("focus",l,!0),document.addEventListener("keydown",d,!0),document.addEventListener("click",u,!0)}function s(){n.classList.remove("open"),r.setAttribute("aria-expanded","false"),i.setAttribute("hidden",""),c.hidden=!0,r.focus(),document.removeEventListener("focus",l,!0),document.removeEventListener("keydown",d,!0),document.removeEventListener("click",u,!0)}function p(){n.classList.contains("open")?s():b()}function d(e){if(n.classList.contains("open"))switch(e.key){case"Escape":e.preventDefault(),s();break;case"ArrowDown":e.preventDefault(),f(1);break;case"ArrowUp":e.preventDefault(),f(-1);break;case"Home":e.preventDefault(),t[0]?.focus();break;case"End":e.preventDefault(),t[t.length-1]?.focus();break}}function u(e){n.contains(e.target)||s()}function l(e){n.classList.contains("open")&&(n.contains(e.target)||t[0]?.focus())}function f(e){const v=(t.indexOf(document.activeElement)+e+t.length)%t.length;t[v]?.focus()}r.addEventListener("click",p),c.addEventListener("click",s),i.addEventListener("click",function(e){const o=e.target.closest('[role="menuitem"]');o&&(o.dataset.action,s())})})();
