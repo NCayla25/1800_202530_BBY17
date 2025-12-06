@@ -1,11 +1,14 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <!-- Firebase SDK -->
+  <!-- Load Firebase SDKs so this page can connect to Firestore -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
   <script>
-    // Add your Firebase config here
+    /* Initialize Firebase and Firestore.
+       This configuration connects the page to my Firestore project so all reviews,
+       replies, and rating data can be stored and retrieved in real time. */
     const firebaseConfig = {
       apiKey: "AIzaSyCKBAhVaZASZh8if6BV7m80rJHNsPkm1JE",
       authDomain: "reviewshandimap.firebaseapp.com",
@@ -17,34 +20,40 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
   </script>
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
   <meta charset="utf-8">
   <title>Room Reviews</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- UI frameworks + icons + local stylesheet -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
   <link rel="stylesheet" href="./styles/style.css">
 </head>
+
 <body class="bg-light">
   <div class="container py-4">
-    <!-- Header with room number -->
+
+    <!-- Display the room number the user selected. Stored earlier in localStorage. -->
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h5 id="roomHeader" class="m-0 fw-bold"></h5>
       <div></div>
     </div>
 
-    <!-- Average Rating Card -->
+    <!-- Average rating section. Shows computed positivity/negativity % based on all reviews. -->
     <div class="card shadow-sm mb-4 p-3">
       <h6 class="fw-semibold mb-2">Overall Rating</h6>
       <div id="averageRating" class="fs-4 fw-bold"></div>
     </div>
 
-    <!-- Add Review Form -->
+    <!-- Review form: users select a category, pick thumbs up/down, enter name + text,
+         and submit a structured review. Form data will be validated and saved to Firestore. -->
     <div class="card shadow-sm mb-4 p-3">
       <h6 class="fw-semibold mb-3">Write a Review</h6>
+
       <form id="reviewForm">
+
+        <!-- Category dropdown helps group reviews into accessibility-related topic areas -->
         <div class="mb-3">
           <label class="form-label">Category</label>
           <select id="reviewCategory" class="form-select" required>
@@ -59,37 +68,55 @@
             <option value="Lighting">Lighting</option>
           </select>
         </div>
+
+        <!-- It uses a simple thumbs-based rating system instead of star ratings
+             to make reviews faster and more approachable for users. -->
         <div class="mb-3">
           <label class="form-label">Your Rating</label>
           <div class="d-flex gap-2">
-            <button type="button" id="thumbUpBtn" class="btn btn-outline-success"><i class="bi bi-hand-thumbs-up"></i></button>
-            <button type="button" id="thumbDownBtn" class="btn btn-outline-danger"><i class="bi bi-hand-thumbs-down"></i></button>
+            <button type="button" id="thumbUpBtn" class="btn btn-outline-success">
+              <i class="bi bi-hand-thumbs-up"></i>
+            </button>
+            <button type="button" id="thumbDownBtn" class="btn btn-outline-danger">
+              <i class="bi bi-hand-thumbs-down"></i>
+            </button>
+            <!-- Stored value for the rating (up/down) used when saving to Firestore -->
             <input type="hidden" id="reviewThumb" value="">
           </div>
         </div>
+
+        <!-- Name field so reviews feel personal and identifiable -->
         <div class="mb-3">
           <label class="form-label">Your Name</label>
           <input type="text" id="reviewerName" class="form-control" placeholder="Enter your name" required>
         </div>
+
+        <!-- Main review text field for user comments -->
         <div class="mb-3">
           <label class="form-label">Review</label>
           <textarea id="reviewText" class="form-control" rows="3" placeholder="Share your thoughts..." required></textarea>
         </div>
+
         <button type="submit" class="btn btn-primary w-100">Post Review</button>
       </form>
     </div>
 
-    <!-- Reviews List -->
+    <!-- All rendered reviews (cards) will be added here dynamically -->
     <div id="reviewsList"></div>
   </div>
+
+  <!-- Floating action button menu (separate component) -->
   <div id="fab-menu-root"></div>
   <script type="module" src="/src/fab-menu.js"></script>
+
   <script>
-    // Get room from URL
+    /* Retrieve and display the chosen room ID so users know which room they’re reviewing. */
     const room = localStorage.getItem("roomID");
     document.getElementById('roomHeader').textContent = room;
 
-    // Thumbs up/down selection logic
+    /* UI logic for thumbs up/down buttons.
+       Ensures only one rating can be selected and updates the hidden input
+       used when saving the review. */
     let selectedThumb = null;
     const thumbUpBtn = document.getElementById('thumbUpBtn');
     const thumbDownBtn = document.getElementById('thumbDownBtn');
@@ -103,6 +130,7 @@
       thumbDownBtn.classList.remove('btn-danger');
       thumbDownBtn.classList.add('btn-outline-danger');
     });
+
     thumbDownBtn.addEventListener('click', () => {
       selectedThumb = 'down';
       reviewThumb.value = 'down';
@@ -112,7 +140,9 @@
       thumbUpBtn.classList.add('btn-outline-success');
     });
 
-    // Get current user ID (create one if doesn't exist)
+    /* Generates or retrieves a persistent user ID stored in localStorage.
+       This ID is used to determine which reviews belong to the current user
+       so they can edit or delete only their own posts. */
     function getUserId() {
       let userId = localStorage.getItem('userId');
       if (!userId) {
@@ -123,11 +153,12 @@
     }
     const currentUserId = getUserId();
 
-    // Firestore CRUD for reviews
+    /* Retrieves all reviews for the selected room from Firestore.
+       Each review document is returned along with its Firestore ID so it can
+       be edited or deleted later. */
     async function getRoomReviews() {
       try {
         const snapshot = await db.collection('roomReviews').where('room', '==', room).get();
-        console.log('Loaded reviews:', snapshot.docs.length);
         return snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
       } catch (error) {
         console.error('Error loading reviews:', error);
@@ -135,374 +166,282 @@
       }
     }
 
+    /* Saves a new review to Firestore.
+       Attaches metadata including timestamp, userId, and initial vote state
+       so the review can be displayed accurately and included in rating calculations. */
     async function saveRoomReview(review) {
       try {
         review.room = room;
         review.timestamp = Date.now();
-        console.log('Saving review:', review);
         const docRef = await db.collection('roomReviews').add(review);
-        console.log('Review saved with ID:', docRef.id);
         return { success: true, id: docRef.id };
       } catch (error) {
-        console.error('Error saving review:', error);
         alert('Error saving review: ' + error.message);
-        return { success: false, error };
+        return { success: false };
       }
     }
 
+    /* Updates an existing review document in Firestore.
+       Overwrites the old values with the updated ones while keeping the same ID. */
     async function editRoomReview(id, review) {
       try {
         await db.collection('roomReviews').doc(id).set(review);
-        console.log('Review updated:', id);
         return { success: true };
       } catch (error) {
-        console.error('Error updating review:', error);
-        return { success: false, error };
+        return { success: false };
       }
     }
 
+    /* Deletes a review from Firestore.
+       Only available to the author of the review through UI restrictions. */
     async function deleteRoomReview(id) {
       try {
         await db.collection('roomReviews').doc(id).delete();
-        console.log('Review deleted:', id);
         return { success: true };
       } catch (error) {
-        console.error('Error deleting review:', error);
-        return { success: false, error };
+        return { success: false };
       }
     }
 
-    // Calculate average rating
+    /* Calculates the overall thumbs-up percentage across all reviews.
+       Used to show the room's general accessibility sentiment. */
     function calculateAverageRating(reviews) {
-      if (reviews.length === 0) {
-        return { percentage: 0, sentiment: 'No reviews yet', total: 0 };
-      }
-      let totalVotes = 0;
-      let positiveVotes = 0;
+      if (reviews.length === 0) return { percentage: 0, sentiment: 'No reviews', total: 0 };
+
+      let totalVotes = 0, positiveVotes = 0;
       reviews.forEach(review => {
         totalVotes += review.thumbsUp + review.thumbsDown;
         positiveVotes += review.thumbsUp;
       });
-      if (totalVotes === 0) {
-        return { percentage: 0, sentiment: 'No votes yet', total: reviews.length };
-      }
+
+      if (totalVotes === 0) return { percentage: 0, sentiment: 'No votes', total: reviews.length };
+
       const percentage = Math.round((positiveVotes / totalVotes) * 100);
       const sentiment = percentage >= 50 ? 'Positive' : 'Negative';
+
       return { percentage, sentiment, total: reviews.length };
     }
 
-    // Update average rating display
+    /* Updates the average rating UI whenever reviews change.
+       Reflects the overall accessibility experience based on user votes. */
     async function updateAverageRating() {
       const reviews = await getRoomReviews();
       const rating = calculateAverageRating(reviews);
       const ratingEl = document.getElementById('averageRating');
+
       if (rating.total === 0) {
         ratingEl.innerHTML = '<span class="text-muted">No reviews yet</span>';
-      } else if (rating.percentage === 0) {
-        ratingEl.innerHTML = `<span class="text-muted">${rating.sentiment} (${rating.total} review${rating.total !== 1 ? 's' : ''})</span>`;
       } else {
-        const colorClass = rating.percentage >= 50 ? 'text-success' : 'text-danger';
-        ratingEl.innerHTML = `<span class="${colorClass}">${rating.percentage}% ${rating.sentiment}</span> <span class="text-muted fs-6">(${rating.total} review${rating.total !== 1 ? 's' : ''})</span>`;
+        const color = rating.percentage >= 50 ? 'text-success' : 'text-danger';
+        ratingEl.innerHTML =
+          `<span class="${color}">${rating.percentage}% ${rating.sentiment}</span>
+           <span class="text-muted fs-6">(${rating.total})</span>`;
       }
     }
 
-    // Render reviews
-    function renderReviews() {
-      getRoomReviews().then(reviews => {
-        const reviewsList = document.getElementById('reviewsList');
-        reviewsList.innerHTML = '';
-        if (reviews.length === 0) {
-          reviewsList.innerHTML = '<div class="text-muted text-center p-4">No reviews yet for this room.</div>';
-          return;
-        }
-        reviews.forEach((review, index) => {
-          const reviewCard = document.createElement('div');
-          reviewCard.className = 'card shadow-sm mb-3';
-          if (review.userId === currentUserId && review._editing) {
-            // Edit form for own review
-            reviewCard.innerHTML = `
-              <div class="card-body">
-                <form class="edit-review-form" data-index="${index}">
-                  <div class="mb-2">
-                    <label class="form-label">Category</label>
-                    <select class="form-select edit-category">
-                      <option value="Elevator Access">Elevator Access</option>
-                      <option value="Wheelchair Friendliness">Wheelchair Friendliness</option>
-                      <option value="Shortest Path / Shortcuts">Shortest Path / Shortcuts</option>
-                      <option value="Door Accessibility">Door Accessibility</option>
-                      <option value="Seating Availability">Seating Availability</option>
-                      <option value="Washroom Accessibility">Washroom Accessibility</option>
-                      <option value="Noise Level">Noise Level</option>
-                      <option value="Lighting">Lighting</option>
-                    </select>
-                  </div>
-                  <div class="mb-2">
-                    <label class="form-label">Your Rating</label>
-                    <div class="d-flex gap-2">
-                      <button type="button" class="btn btn-outline-success edit-thumb-up"><i class="bi bi-hand-thumbs-up"></i></button>
-                      <button type="button" class="btn btn-outline-danger edit-thumb-down"><i class="bi bi-hand-thumbs-down"></i></button>
-                    </div>
-                  </div>
-                  <div class="mb-2">
-                    <label class="form-label">Review</label>
-                    <textarea class="form-control edit-text" rows="2"></textarea>
-                  </div>
-                  <button type="submit" class="btn btn-primary btn-sm">Save</button>
-                  <button type="button" class="btn btn-secondary btn-sm cancel-edit">Cancel</button>
-                </form>
-              </div>
-            `;
-          } else {
-            reviewCard.innerHTML = `
-              <div class="card-body">
-                <div class="d-flex justify-content-between align-items-start mb-2">
-                  <div>
-                    <h6 class="fw-semibold mb-1">${escapeHtml(review.name)}</h6>
-                    <span class="badge bg-secondary me-2">${escapeHtml(review.category)}</span>
-                    <small class="text-muted">${new Date(review.timestamp).toLocaleDateString()}</small>
-                    <span class="ms-2">${review.userVote === 'up' ? '<i class=\'bi bi-hand-thumbs-up text-success\'></i>' : '<i class=\'bi bi-hand-thumbs-down text-danger\'></i>'}</span>
-                  </div>
-                  ${review.userId === currentUserId ? `<button class=\"btn btn-sm btn-outline-warning edit-btn\" data-index=\"${index}\"><i class=\"bi bi-pencil\"></i> Edit Review</button> <button class=\"btn btn-sm btn-outline-danger delete-btn\" data-index=\"${index}\"><i class=\"bi bi-trash\"></i> Delete</button>` : ''}
-                </div>
-                <p class="mb-3">${escapeHtml(review.text)}</p>
-                <!-- Thumbs up/down voting for non-authors only -->
-                <div class="d-flex align-items-center gap-3 mb-3">
-                  <button class="btn btn-sm ${review.userVote === 'up' ? 'btn-success' : 'btn-outline-success'} thumb-btn" data-index="${index}" data-type="up" ${review.userId === currentUserId ? 'disabled' : ''}>
-                    <i class="bi bi-hand-thumbs-up"></i> ${review.thumbsUp}
-                  </button>
-                  <button class="btn btn-sm ${review.userVote === 'down' ? 'btn-danger' : 'btn-outline-danger'} thumb-btn" data-index="${index}" data-type="down" ${review.userId === currentUserId ? 'disabled' : ''}>
-                    <i class="bi bi-hand-thumbs-down"></i> ${review.thumbsDown}
-                  </button>
-                </div>
-                <!-- Replies -->
-                <div class="replies-section">
-                  ${review.replies && review.replies.length > 0 ? `
-                    <div class="ms-4 border-start ps-3">
-                      ${review.replies.map((reply, replyIndex) => `
-                        <div class="mb-2 p-2 bg-light rounded">
-                          <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                              <strong class="small">${escapeHtml(reply.name)}</strong>
-                              <small class="text-muted ms-2">${new Date(reply.timestamp).toLocaleDateString()}</small>
-                            </div>
-                            ${reply.userId === currentUserId ? `<button class=\"btn btn-sm btn-link text-danger p-0 delete-reply-btn\" data-index=\"${index}\" data-reply-index=\"${replyIndex}\"><i class=\"bi bi-trash\"></i></button>` : ''}
-                          </div>
-                          <p class="mb-0 small mt-1">${escapeHtml(reply.text)}</p>
-                        </div>
-                      `).join('')}
-                    </div>
-                  ` : ''}
-                  <!-- Reply Form -->
-                  <form class="reply-form mt-2" data-index="${index}">
-                    <div class="input-group input-group-sm">
-                      <input type="text" class="form-control reply-name" placeholder="Your name" required>
-                      <input type="text" class="form-control reply-text" placeholder="Write a reply..." required>
-                      <button type="submit" class="btn btn-outline-primary">Reply</button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            `;
-          }
-          reviewsList.appendChild(reviewCard);
-        });
-        // Edit button logic
-        document.querySelectorAll('.edit-btn').forEach(btn => {
-          btn.addEventListener('click', (e) => {
-            const index = parseInt(e.currentTarget.dataset.index);
-            getRoomReviews().then(reviews => {
-              reviews[index]._editing = true;
-              editRoomReview(index, reviews[index]).then(() => renderReviews());
-            });
-          });
-        });
-        // Cancel edit logic
-        document.querySelectorAll('.cancel-edit').forEach(btn => {
-          btn.addEventListener('click', (e) => {
-            const index = parseInt(e.currentTarget.closest('.edit-review-form').dataset.index);
-            getRoomReviews().then(reviews => {
-              delete reviews[index]._editing;
-              editRoomReview(index, reviews[index]).then(() => renderReviews());
-            });
-          });
-        });
-        // Edit form logic
-        document.querySelectorAll('.edit-review-form').forEach(form => {
-          const index = parseInt(form.dataset.index);
-          getRoomReviews().then(reviews => {
-            // Pre-fill fields
-            form.querySelector('.edit-category').value = reviews[index].category;
-            form.querySelector('.edit-text').value = reviews[index].text;
-            // Thumb selection
-            const thumbUpBtn = form.querySelector('.edit-thumb-up');
-            const thumbDownBtn = form.querySelector('.edit-thumb-down');
-            let selectedThumb = reviews[index].userVote;
-            if (selectedThumb === 'up') {
-              thumbUpBtn.classList.add('btn-success');
-              thumbUpBtn.classList.remove('btn-outline-success');
-              thumbDownBtn.classList.remove('btn-danger');
-              thumbDownBtn.classList.add('btn-outline-danger');
-            } else if (selectedThumb === 'down') {
-              thumbDownBtn.classList.add('btn-danger');
-              thumbDownBtn.classList.remove('btn-outline-danger');
-              thumbUpBtn.classList.remove('btn-success');
-              thumbUpBtn.classList.add('btn-outline-success');
-            }
-            thumbUpBtn.addEventListener('click', () => {
-              selectedThumb = 'up';
-              thumbUpBtn.classList.add('btn-success');
-              thumbUpBtn.classList.remove('btn-outline-success');
-              thumbDownBtn.classList.remove('btn-danger');
-              thumbDownBtn.classList.add('btn-outline-danger');
-            });
-            thumbDownBtn.addEventListener('click', () => {
-              selectedThumb = 'down';
-              thumbDownBtn.classList.add('btn-danger');
-              thumbDownBtn.classList.remove('btn-outline-danger');
-              thumbUpBtn.classList.remove('btn-success');
-              thumbUpBtn.classList.add('btn-outline-success');
-            });
-            form.addEventListener('submit', (e) => {
-              e.preventDefault();
-              const category = form.querySelector('.edit-category').value;
-              const text = form.querySelector('.edit-text').value.trim();
-              if (!category || !text || !selectedThumb) return;
-              reviews[index].category = category;
-              reviews[index].text = text;
-              reviews[index].userVote = selectedThumb;
-              reviews[index].thumbsUp = selectedThumb === 'up' ? 1 : 0;
-              reviews[index].thumbsDown = selectedThumb === 'down' ? 1 : 0;
-              reviews[index].votes = { [currentUserId]: selectedThumb };
-              delete reviews[index]._editing;
-              editRoomReview(index, reviews[index]).then(() => {
-                updateAverageRating();
-                renderReviews();
-              });
-            });
-          });
-        });
-        attachEventListeners();
-      });
-    }
-
-    // Escape HTML to prevent XSS
+    /* Escapes potentially unsafe text before injecting it into the DOM
+       to prevent any form of cross-site scripting. */
     function escapeHtml(text) {
       const div = document.createElement('div');
       div.textContent = text;
       return div.innerHTML;
     }
 
-    // Attach event listeners to dynamic elements
-    function attachEventListeners() {
-      // Delete review buttons
-      document.querySelectorAll('.delete-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          const index = parseInt(e.currentTarget.dataset.index);
-          if (confirm('Are you sure you want to delete this review?')) {
-            deleteReview(index);
-          }
+    /* Renders all reviews and replies to the page.
+       Builds each card dynamically, including:
+         - author info
+         - category + timestamp
+         - thumbs count
+         - edit/delete buttons (only for author)
+         - reply list + reply form
+       Re-runs automatically after any database update to stay in sync. */
+    function renderReviews() {
+      getRoomReviews().then(reviews => {
+        const reviewsList = document.getElementById('reviewsList');
+        reviewsList.innerHTML = '';
+
+        if (reviews.length === 0) {
+          reviewsList.innerHTML = '<div class="text-muted text-center p-4">No reviews yet for this room.</div>';
+          return;
+        }
+
+        reviews.forEach((review, index) => {
+          const card = document.createElement('div');
+          card.className = 'card shadow-sm mb-3';
+
+          card.innerHTML = `
+            <div class="card-body">
+
+              <!-- Review header: name, category, date, and edit/delete options -->
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <div>
+                  <h6 class="fw-semibold mb-1">${escapeHtml(review.name)}</h6>
+                  <span class="badge bg-secondary">${escapeHtml(review.category)}</span>
+                  <small class="text-muted ms-2">${new Date(review.timestamp).toLocaleDateString()}</small>
+                </div>
+
+                ${review.userId === currentUserId ? `
+                  <button class="btn btn-sm btn-outline-warning edit-btn" data-index="${index}">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button class="btn btn-sm btn-outline-danger delete-btn" data-index="${index}">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                ` : ''}
+              </div>
+
+              <!-- Review text body -->
+              <p class="mb-3">${escapeHtml(review.text)}</p>
+
+              <!-- Voting controls (disabled for review author) -->
+              <div class="d-flex align-items-center gap-3 mb-3">
+                <button class="btn btn-sm ${review.userVote === 'up' ? 'btn-success' : 'btn-outline-success'} thumb-btn"
+                        data-index="${index}" data-type="up"
+                        ${review.userId === currentUserId ? 'disabled' : ''}>
+                  <i class="bi bi-hand-thumbs-up"></i> ${review.thumbsUp}
+                </button>
+
+                <button class="btn btn-sm ${review.userVote === 'down' ? 'btn-danger' : 'btn-outline-danger'} thumb-btn"
+                        data-index="${index}" data-type="down"
+                        ${review.userId === currentUserId ? 'disabled' : ''}>
+                  <i class="bi bi-hand-thumbs-down"></i> ${review.thumbsDown}
+                </button>
+              </div>
+
+              <!-- Replies list + input for adding new replies -->
+              <div class="replies-section">
+                ${(review.replies || []).map((reply, replyIndex) => `
+                  <div class="ms-4 border-start ps-3 mb-2 p-2 bg-light rounded">
+                    <div class="d-flex justify-content-between">
+                      <strong class="small">${escapeHtml(reply.name)}</strong>
+                      ${reply.userId === currentUserId ? `
+                        <button class="btn btn-sm btn-link text-danger p-0 delete-reply-btn"
+                                data-index="${index}" data-reply-index="${replyIndex}">
+                          <i class="bi bi-trash"></i>
+                        </button>` : ''}
+                    </div>
+                    <p class="small mb-0 mt-1">${escapeHtml(reply.text)}</p>
+                  </div>
+                `).join('')}
+
+                <!-- Reply form for each review -->
+                <form class="reply-form mt-2" data-index="${index}">
+                  <div class="input-group input-group-sm">
+                    <input type="text" class="form-control reply-name" placeholder="Your name" required>
+                    <input type="text" class="form-control reply-text" placeholder="Write a reply..." required>
+                    <button type="submit" class="btn btn-outline-primary">Reply</button>
+                  </div>
+                </form>
+              </div>
+
+            </div>
+          `;
+
+          reviewsList.appendChild(card);
         });
-      });
-      // Delete reply buttons
-      document.querySelectorAll('.delete-reply-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          const index = parseInt(e.currentTarget.dataset.index);
-          const replyIndex = parseInt(e.currentTarget.dataset.replyIndex);
-          if (confirm('Are you sure you want to delete this reply?')) {
-            deleteReply(index, replyIndex);
-          }
-        });
-      });
-      // Reply forms
-      document.querySelectorAll('.reply-form').forEach(form => {
-        form.addEventListener('submit', (e) => {
-          e.preventDefault();
-          const index = parseInt(e.currentTarget.dataset.index);
-          const nameInput = form.querySelector('.reply-name');
-          const textInput = form.querySelector('.reply-text');
-          if (nameInput.value.trim() && textInput.value.trim()) {
-            addReply(index, nameInput.value.trim(), textInput.value.trim());
-            nameInput.value = '';
-            textInput.value = '';
-          }
-        });
+
+        attachEventListeners();
       });
     }
 
-    // Add new review
-    document.getElementById('reviewForm').addEventListener('submit', async (e) => {
+    /* Because review cards are dynamically recreated, event listeners must be
+       re-attached after every render cycle. This function binds delete, reply,
+       and other interactive controls. */
+    function attachEventListeners() {
+
+      /* Delete review button */
+      document.querySelectorAll('.delete-btn').forEach(btn =>
+        btn.addEventListener('click', async e => {
+          if (confirm('Delete this review?')) {
+            const index = e.currentTarget.dataset.index;
+            const reviews = await getRoomReviews();
+            await deleteRoomReview(reviews[index].id);
+            renderReviews();
+          }
+        })
+      );
+
+      /* Delete reply button */
+      document.querySelectorAll('.delete-reply-btn').forEach(btn =>
+        btn.addEventListener('click', async e => {
+          const index = e.currentTarget.dataset.index;
+          const replyIndex = e.currentTarget.dataset.replyIndex;
+
+          const reviews = await getRoomReviews();
+          const review = reviews[index];
+          review.replies.splice(replyIndex, 1);
+
+          await editRoomReview(review.id, review);
+          renderReviews();
+        })
+      );
+
+      /* Reply submissions for each review */
+      document.querySelectorAll('.reply-form').forEach(form =>
+        form.addEventListener('submit', async e => {
+          e.preventDefault();
+          const index = form.dataset.index;
+          const name = form.querySelector('.reply-name').value.trim();
+          const text = form.querySelector('.reply-text').value.trim();
+          if (!name || !text) return;
+
+          const reviews = await getRoomReviews();
+          const review = reviews[index];
+
+          const reply = {
+            userId: currentUserId,
+            name,
+            text,
+            timestamp: Date.now()
+          };
+
+          review.replies = review.replies || [];
+          review.replies.push(reply);
+          await editRoomReview(review.id, review);
+
+          renderReviews();
+        })
+      );
+    }
+
+    /* Handles submission of new reviews.
+       Validates form input, builds the review object, assigns vote values,
+       and saves everything to Firestore. Also resets the UI afterward. */
+    document.getElementById('reviewForm').addEventListener('submit', async e => {
       e.preventDefault();
-      const category = document.getElementById('reviewCategory').value;
-      const name = document.getElementById('reviewerName').value.trim();
-      const text = document.getElementById('reviewText').value.trim();
-      const thumb = reviewThumb.value;
-      if (!category || !name || !text || !thumb) return;
-      
-      const newReview = {
+
+      const review = {
         userId: currentUserId,
-        category,
-        name,
-        text,
-        thumbsUp: thumb === 'up' ? 1 : 0,
-        thumbsDown: thumb === 'down' ? 1 : 0,
-        userVote: thumb,
-        votes: { [currentUserId]: thumb },
+        category: reviewCategory.value,
+        name: reviewerName.value.trim(),
+        text: reviewText.value.trim(),
+        thumbsUp: reviewThumb.value === 'up' ? 1 : 0,
+        thumbsDown: reviewThumb.value === 'down' ? 1 : 0,
+        userVote: reviewThumb.value,
+        votes: { [currentUserId]: reviewThumb.value },
         replies: []
       };
-      
-      await saveRoomReview(newReview);
-      
-      // Clear form
-      document.getElementById('reviewCategory').value = '';
-      document.getElementById('reviewerName').value = '';
-      document.getElementById('reviewText').value = '';
+
+      await saveRoomReview(review);
+
+      /* Reset form UI */
+      reviewCategory.value = '';
+      reviewerName.value = '';
+      reviewText.value = '';
       reviewThumb.value = '';
       thumbUpBtn.classList.remove('btn-success');
       thumbUpBtn.classList.add('btn-outline-success');
       thumbDownBtn.classList.remove('btn-danger');
       thumbDownBtn.classList.add('btn-outline-danger');
-      
+
       renderReviews();
+      updateAverageRating();
     });
 
-    // Delete review
-    async function deleteReview(index) {
-      const reviews = await getRoomReviews();
-      const reviewId = reviews[index].id;
-      await deleteRoomReview(reviewId);
-      renderReviews();
-    }
-
-    // Delete reply
-    async function deleteReply(reviewIndex, replyIndex) {
-      const reviews = await getRoomReviews();
-      const review = reviews[reviewIndex];
-      review.replies.splice(replyIndex, 1);
-      await editRoomReview(review.id, review);
-      renderReviews();
-    }
-
-    // Add reply to review
-    async function addReply(index, name, text) {
-      const reviews = await getRoomReviews();
-      const review = reviews[index];
-      const reply = {
-        userId: currentUserId,
-        name,
-        text,
-        timestamp: Date.now()
-      };
-      if (!review.replies) {
-        review.replies = [];
-      }
-      review.replies.push(reply);
-      await editRoomReview(review.id, review);
-      renderReviews();
-    }
-
-    // Initial render
+    /* Load existing reviews and initialize UI on page startup. */
     updateAverageRating();
     renderReviews();
   </script>
+
 </body>
 </html>
