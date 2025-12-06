@@ -3,6 +3,7 @@ import { signOut, onAuthStateChanged} from "firebase/auth";
 import { db } from "./firebaseConfig.js";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 
+// Signout Button
 window.addEventListener("DOMContentLoaded", () => {
     const signoutBtn = document.getElementById("signout-btn");
 
@@ -23,6 +24,7 @@ window.addEventListener("DOMContentLoaded", () => {
     });
 });
 
+// Map marker button
 document.getElementById("toggle-markers").addEventListener("click", async () => {
     try {
         const user = auth.currentUser;
@@ -34,6 +36,7 @@ document.getElementById("toggle-markers").addEventListener("click", async () => 
     }
 });
 
+// Gets the map marker settings from firebase
 function loadMapSettings() {
     onAuthStateChanged(auth, async (user) => {
         if (user) {
