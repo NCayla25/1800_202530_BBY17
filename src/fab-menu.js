@@ -5,7 +5,7 @@
         document.body.appendChild(el);
         return el;
     })();
-
+    // Fab Menu HTML
     root.innerHTML = `
         <div class="fab-container" data-fab>
             <button class="fab-button" aria-label="Open menu" aria-haspopup="menu" aria-expanded="false" aria-controls="fab-menu" id="fab-trigger">
@@ -20,6 +20,7 @@
             <div class="fab-backdrop" hidden></div>
         </div>
         `;
+        // Hides current menu options
         root.querySelector('.fab-container').classList.remove('open');
         const container = root.querySelector('[data-fab]');
         const trigger = root.querySelector('#fab-trigger');
@@ -71,6 +72,7 @@
             if (isOpen) closeMenu(); else openMenu();
         }
 
+        // Keyboard controls
         function onKeyDown(e) {
             const isOpen = container.classList.contains('open');
             if (!isOpen) return;

@@ -21,6 +21,7 @@
         <div class="page-container card">
             <h1>User Profile</h1>
             <form>
+                <!--Profile Picture-->
                 <div class="profile-pic-section">
                     <img id="profileImage" src="./images/elmo.jpg" alt="Profile Picture"
                         style="width:120px; height:120px; border-radius:50%; object-fit:cover;" />
@@ -32,8 +33,7 @@
                     </button>
                 </div>
                 <fieldset class="mb-3" id="personalInfoFields" disabled>
-
-
+                    <!--Personal Information-->
                     <div class="form-group">
                         <label><b>Name</b></label>
                         <input type="text" id="nameInput" class="form-control" placeholder="Enter your name">
@@ -51,7 +51,7 @@
                         <label><b>City</b></label>
                         <input type="text" id="cityInput" class="form-control" placeholder="Enter your city">
                     </div>
-
+                    <!--Accessibility Need-->
                     <div class="form-group">
                         <label><b>Mobility Aid:</b></label>
                         <select class="form-control" id="mobilityAid">
@@ -62,7 +62,7 @@
                             <option value="Other">Other</option>
                         </select>
                     </div>
-
+                    <!--Frequent Routes Textbox-->
                     <div class="form-group">
                         <label>Frequent Routes:</label>
                         <textarea class="form-control" id="frequentRoutes"
@@ -77,7 +77,7 @@
             </form>
         </div>
     </main>
-
+    <!--Burger Menu-->
     <div id="fab-menu-root"></div>
     <script type="module" src="./src/fab-menu.js"></script>
     <script type="module" src="./src/main.js"></script>

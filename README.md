@@ -19,21 +19,21 @@ Our team BBY17 is developing a web app named HandiMap to help students with acce
 
 ## Technologies Used
 
-Example:
 - **Frontend**: HTML, CSS, JavaScript
 - **Build Tool**: [Vite](https://vitejs.dev/)
 - **Backend**: Firebase for hosting
 - **Database**: Firestore
-
+- **MapBox**: Mapbox
 ---
 
 
 ## Usage
 
-1. Open your browser and visit `http://localhost:3000`.
-2. Browse the list of hiking trails displayed on the main page.
-3. Click the heart icon (or similar) to mark a trail as a favorite.
-4. View your favorite hikes in the favorites section.
+1. Open your browser and visit `http://localhost:5137`.
+2. Browse the map and choose which rooms you have classes in.
+3. Click the question mark icon to view that room's reviews to check for accessibility.
+4. View and update your profile in the profile section.
+5. Toggle the map markers and sign out in the settings section.
 
 ---
 
@@ -41,15 +41,40 @@ Example:
 ## Project Structure
 
 ```
-elmo-hikes/
+1800_202530_BBY17/
 ├── src/
 │   ├── main.js
+│   ├── authentication.js
+│   ├── fab-menu.js
+│   ├── firebaseConfig.js
+│   ├── loginSignup.js
+│   ├── map.js
+│   ├── profile.js
+│   ├── settings.js
+│   ├── vite.config.js
 ├── styles/
 │   └── style.css
-├── public/
 ├── images/
+│   ├── blank.jpg
+│   ├── click.png
+│   ├── elmo.jpg
+│   ├── icons8-map-24.png
+│   ├── icons8-profile-24.png
+│   ├── icons8-review-50.png
+│   ├── logo.png
+│   ├── question.png
+│   ├── roomLogo.png
+│   ├── se12-3.jpg
+│   ├── se12-4.jpg
 ├── index.html
+├── login.html
+├── map.html
+├── profile.html
+├── room-reviews.html
+├── settings.html
+├── skeleton.html
 ├── package.json
+├── package-lock.json
 ├── README.md
 ```
 
@@ -58,32 +83,23 @@ elmo-hikes/
 
 ## Contributors
 
-- **Heebba Salman** - BCIT CST Student with a passion for outdoor adventures and user-friendly applications. Fun fact: Loves solving Rubik's Cubes in under a minute.
-- **Nicholas Cayla** (NCayla25) - BCIT CST Student with a passion for outdoor adventures and user-friendly applications. Fun fact: Loves solving Rubik's Cubes in under a minute.
+- **Heebba Salman** (heebbas_67319) - BCIT CST Student with a passion for a good scenic hike! Fun fact: I can speak 6 languages and I have an identical twin sister.
+- **Nicholas Cayla** (NCayla25) - BCIT CST Student with a passion for video games and movies! Fun fact: I am fluent in French and I have 3 cats!
 - **Damon Cao** (homelessradish) - BCIT CST Student with a passion for indoor adventures and user-friendly applications. Fun fact: Loves doing assignments the day of the deadline.
 
 ---
 
-
-## Acknowledgments
-
-- Trail data and images are for demonstration purposes only.
-- Code snippets were adapted from resources such as [Stack Overflow](https://stackoverflow.com/) and [MDN Web Docs](https://developer.mozilla.org/).
-- Icons sourced from [FontAwesome](https://fontawesome.com/) and images from [Unsplash](https://unsplash.com/).
-
----
-
-
 ## Limitations and Future Work
 ### Limitations
 
-- Limited trail details (e.g., no live trail conditions).
+- Limited buildings and floor plans.
 - Accessibility features can be further improved.
 
 ### Future Work
 
-- Implement map view and trailhead directions.
-- Add filtering and sorting options (e.g., by difficulty, distance).
+- Implement full campus map with building selection.
+- Add hot routes.
+- Add more personalization options.
 - Create a dark mode for better usability in low-light conditions.
 
 ---
